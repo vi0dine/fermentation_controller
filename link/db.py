@@ -141,6 +141,6 @@ def create_reading(conn, batch_id, step_id, reading):
 def seed_test_data(conn):
     create_batch(conn, ("Test Batch 1"))
     create_batch(conn, ("Test Batch 2"))
-    create_step(conn, (17.0, 1624381558, 1624381858, 2))
-    create_step(conn, (21.0, 1624381858, 1624382158, 2))
-    create_step(conn, (24.0, 1624382158, 1624382458, 2))
+    create_step(conn, (17.0, 1624385457, 1624385757, 2))
+    create_step(conn, (21.0, 1624385757, 1624386057, 2))
+    create_step(conn, (24.0, 1624386057, 1624386357, 2))
