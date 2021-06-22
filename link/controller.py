@@ -75,22 +75,26 @@ def check_temperature_settings(current):
 def change_step():
     global current_step
 
-    if current_step["end_date"] <= time.time():
-        print("Searching for the next step...")
-        steps = db.get_steps(conn)
-        current_index = steps.index(current_step)
-        if current_index >= 0 and current_index + 1 < len(steps):
-            print("Setting next step")
-            led_cycle(120,120,0,0.1,10)
-            current_step = steps[current_index + 1]
-            db.update_step(conn, 
-            {"temperature": current_step["temperature"], "begin_date": current_step["begin_date"], "end_date": current_step["end_date"], "current": 1, "id": current_step["id"]})
-            current_step = db.get_current_step(conn)
+    try:
+        if current_step["end_date"] <= time.time():
+            print("Searching for the next step...")
+            steps = db.get_steps(conn)
+            current_index = steps.index(current_step)
+            if current_index >= 0 and current_index + 1 < len(steps):
+                print("Setting next step")
+                led_cycle(120,120,0,0.1,10)
+                current_step = steps[current_index + 1]
+                db.update_step(conn, 
+                {"temperature": current_step["temperature"], "begin_date": current_step["begin_date"], "end_date": current_step["end_date"], "current": 1, "id": current_step["id"]})
+                current_step = db.get_current_step(conn)
+            else:
+                print("No further steps.")
         else:
-            print("No further steps.")
-    else:
-        to_end = int(current_step["end_date"]) - int(time.time())
-        print("%s minutes of this step remaining..." % math.ceil(((to_end / 1000) / 60)))
+            to_end = int(current_step["end_date"]) - int(time.time())
+            print("%s minutes of this step remaining..." % math.ceil(((to_end / 1000) / 60)))
+    except ValueError as e:
+        led_cycle(255, 0, 0, 0.05, 5)
+        current_step = db.get_current_step(conn)
 
 
 def toggle_heater(state):
