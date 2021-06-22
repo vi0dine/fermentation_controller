@@ -39,9 +39,10 @@ def steps():
 
 @app.route('/api/steps/<id>', methods=['PUT'])
 def step(id):
+    data = request.get_json(force=True)
     conn = db.create_connection(r"./brew_valley_link.db")
-    step = db.set_step_as_current(conn, id)
-    return render_json(batch)
+    step = db.update_step(conn, {"id": id, "temperature": data["temperature"], "current": data["current"], "begin_date": data["begin_date"], "end_date": data["end_date"] })
+    return render_json(step)
 
 @app.route('/api/readings')
 def readings():

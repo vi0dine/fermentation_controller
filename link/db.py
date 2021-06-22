@@ -107,10 +107,16 @@ def create_step(conn, step):
     conn.commit()
     return cur.lastrowid
 
-def set_step_as_current(conn, step_id):
+def update_step(conn, step):
     cur = conn.cursor()
-    cur.execute("UPDATE fermentation_steps SET current = 0")
-    cur.execute("UPDATE fermentation_steps SET current = 1 WHERE id = ?", (batch_id,))
+    if step["current"]:
+        cur.execute("UPDATE fermentation_steps SET current = 0")
+
+    cur.execute("""UPDATE fermentation_steps SET temperature = ?, 
+                                                 current = ? 
+                                                 begin_date = ?,
+                                                 end_date = ? WHERE id = ?""", 
+                                                 (step["temperature"], step["current"], step["begin_date"], step["end_date"]))
 
 def get_readings(conn):
     cur = conn.cursor()

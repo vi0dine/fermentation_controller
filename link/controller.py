@@ -26,13 +26,14 @@ conn = db.create_connection(r"./brew_valley_link.db")
 current_batch = None
 current_step = None
 desired_temperature = None
+hysteresis = 0.5
 
 def call():
     current_batch = db.get_current_batch(conn)
     current_step = db.get_current_step(conn)
 
     while True:
-        if current_step:
+        if current_batch or current_step:
             desired_temperature = current_step["temperature"]
             temperature = sensor.get_temperature()
             check_temperature_settings(temperature)
@@ -42,14 +43,16 @@ def call():
             time.sleep(30)
         else:
             print("Cant find current step")
+            current_batch = db.get_current_batch(conn)
+            current_step = db.get_current_step(conn)
 
 def check_temperature_settings(current):
-    if abs(temperature - desired_temperature) > hysteresis:
-        if temperature > desired_temperature:
+    if abs(current - desired_temperature) > hysteresis:
+        if current > desired_temperature:
             toggle_heater("OFF")
             time.sleep(1)
             toggle_cooler("ON")
-        elif temperature < desired_temperature:
+        elif current < desired_temperature:
             toggle_cooler("OFF")
             time.sleep(1)
             toggle_heater("ON")
