@@ -64,17 +64,22 @@ def get_current_batch(conn):
     return rows
 
 def create_batch(conn, batch):
-    sql = ''' INSERT INTO batches(name, current)
-            VALUES(?, ?) '''
+    sql = ''' INSERT INTO batches(name)
+            VALUES(?) '''
     cur = conn.cursor()
     cur.execute(sql, batch)
     conn.commit()
     return cur.lastrowid
 
-def set_batch_as_active(conn, batch_id):
+def update_batch(conn, batch):
     cur = conn.cursor()
-    cur.execute("UPDATE batches SET current = 0")
-    cur.execute("UPDATE batches SET current = 1 WHERE id = ?", (batch_id,))
+    if batch["current"] == 1:
+        cur.execute("""UPDATE batches SET current = 0""")
+
+    cur.execute("""UPDATE batches SET name = ?, current = ? WHERE id = ?""", (batch["name"], batch["current"]))
+    conn.commit()
+    
+    return cur.lastrowid
 
 def get_steps(conn):
     cur = conn.cursor()
@@ -82,12 +87,10 @@ def get_steps(conn):
 
     current_batch = cur.fetchone()
 
-    print(current_batch['id'])
-
-    cur.execute("SELECT * FROM fermentation_steps WHERE batch_id = ?", (current_batch["id"],))
-
-    rows = cur.fetchall()
-    return rows
+    if current_batch:
+        cur.execute("SELECT * FROM fermentation_steps WHERE batch_id = ? ORDER BY start_date ASC", (current_batch["id"],))
+        rows = cur.fetchall()
+        return rows
 
 def get_current_step(conn):
     cur = conn.cursor()
@@ -97,14 +100,14 @@ def get_current_step(conn):
     return rows
 
 def create_step(conn, step):
-    sql = ''' INSERT INTO fermentation_steps(temperature, begin_date, end_date, batch_id, current)
-            VALUES(?, ?, ?, ?, ?) '''
+    sql = ''' INSERT INTO fermentation_steps(temperature, begin_date, end_date, batch_id)
+            VALUES(?, ?, ?, ?) '''
     cur = conn.cursor()
     cur.execute(sql, step)
     conn.commit()
     return cur.lastrowid
 
-def set_step_as_active(conn, step_id):
+def set_step_as_current(conn, step_id):
     cur = conn.cursor()
     cur.execute("UPDATE fermentation_steps SET current = 0")
     cur.execute("UPDATE fermentation_steps SET current = 1 WHERE id = ?", (batch_id,))
@@ -112,15 +115,12 @@ def set_step_as_active(conn, step_id):
 def get_readings(conn):
     cur = conn.cursor()
     cur.execute("SELECT * FROM batches WHERE current = 1")
-
     current_batch = cur.fetchone()
 
-    print(current_batch['id'])
-
-    cur.execute("SELECT * FROM batch_temperature_readings WHERE batch_id = ?", (current_batch["id"],))
-
-    rows = cur.fetchall()
-    return rows
+    if current_batch:
+        cur.execute("SELECT * FROM batch_temperature_readings WHERE batch_id = ?", (current_batch["id"],))
+        rows = cur.fetchall()
+        return rows
 
 def create_reading(conn, batch_id, step_id, reading):
     sql = ''' INSERT INTO batch_temperature_readings(temperature, fermentation_step_id, batch_id)
@@ -134,4 +134,5 @@ def seed_test_data(conn):
     create_batch(conn, ("Test Batch 1", 0))
     create_batch(conn, ("Test Batch 2", 1))
     create_step(conn, (17.0, 1624289246, 1624462046, 2, 0))
-    create_step(conn, (21.0, 1624462046, 1624807646, 2, 1))
+    create_step(conn, (21.0, 1624462046, 1624807646, 2, 0))
+    create_step(conn, (24.0, 1624807646, 1624907646, 2, 0))

@@ -3,6 +3,7 @@ from w1thermsensor import W1ThermSensor
 import time
 import board
 import neopixel
+import time
 from database import db
 
 GPIO.setmode(GPIO.BCM)
@@ -21,22 +22,24 @@ sensor = W1ThermSensor()
 pixels = neopixel.NeoPixel(LED_RING_PIN, LEDS_COUNT, brightness = 0.4)
 conn = db.create_connection(r"./brew_valley_link.db")
 
-def main():
-    desired_temperature = 29.0
-    hysteresis = 0.5
-    delay = 5
+current_batch = None
+current_step = None
+desired_temperature = None
 
+def call():
     current_batch = db.get_current_batch(conn)
     current_step = db.get_current_step(conn)
 
     while True:
+        desired_temperature = current_step["temperature"]
         temperature = sensor.get_temperature()
-        check_temperature_settings()
+        check_temperature_settings(temperature)
+        change_step()
         led_cycle(220, 0, 255, 0.05, 1)
         db.create_reading(conn, current_batch, current_step, temperature)
         time.sleep(30)
 
-def check_temperature_settings():
+def check_temperature_settings(current):
     if abs(temperature - desired_temperature) > hysteresis:
         if temperature > desired_temperature:
             toggle_heater("OFF")
@@ -46,6 +49,14 @@ def check_temperature_settings():
             toggle_cooler("OFF")
             time.sleep(1)
             toggle_heater("ON")
+
+def change_step():
+    if current_step["end_date"] >= time.time():
+        steps = db.get_steps(conn)
+        current_index = steps.index(current_step)
+        if steps[current_index + 1]:
+            current_step = steps[current_index + 1]
+
 
 def toggle_heater(state):
     if state == "ON" && GPIO.input(HEATER_PIN):
