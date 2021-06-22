@@ -132,8 +132,8 @@ def create_reading(conn, batch_id, step_id, reading):
     return cur.lastrowid
 
 def seed_test_data(conn):
-    create_batch(conn, ("Test Batch 1", 0))
-    create_batch(conn, ("Test Batch 2", 1))
-    create_step(conn, (17.0, 1624289246, 1624462046, 2, 0))
-    create_step(conn, (21.0, 1624462046, 1624807646, 2, 0))
-    create_step(conn, (24.0, 1624807646, 1624907646, 2, 0))
+    create_batch(conn, ("Test Batch 1"))
+    create_batch(conn, ("Test Batch 2"))
+    create_step(conn, (17.0, 1624289246, 1624462046, 2))
+    create_step(conn, (21.0, 1624462046, 1624807646, 2))
+    create_step(conn, (24.0, 1624807646, 1624907646, 2))
