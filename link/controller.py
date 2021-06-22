@@ -32,13 +32,14 @@ def call():
     current_step = db.get_current_step(conn)
 
     while True:
-        desired_temperature = current_step["temperature"]
-        temperature = sensor.get_temperature()
-        check_temperature_settings(temperature)
-        change_step()
-        led_cycle(220, 0, 255, 0.05, 1)
-        db.create_reading(conn, current_batch, current_step, temperature)
-        time.sleep(30)
+        if current_step:
+            desired_temperature = current_step["temperature"]
+            temperature = sensor.get_temperature()
+            check_temperature_settings(temperature)
+            change_step()
+            led_cycle(220, 0, 255, 0.05, 1)
+            db.create_reading(conn, current_batch, current_step, temperature)
+            time.sleep(30)
 
 def check_temperature_settings(current):
     if abs(temperature - desired_temperature) > hysteresis:
