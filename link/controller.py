@@ -89,6 +89,7 @@ def change_step():
             current_step = steps[current_index + 1]
             db.update_step(conn, 
             {"temperature": current_step["temperature"], "begin_date": current_step["begin_date"], "end_date": current_step["end_date"], "current": 1, "id": current_step["id"]})
+            current_step = db.get_current_step(conn)
     else:
         to_end = int(current_step["end_date"]) - int(time.time())
         print("%s minutes of this step remaining..." % math.ceil(((to_end / 1000) / 60)))
