@@ -88,9 +88,9 @@ def change_step():
             led_cycle(120,120,0,0.02,1)
             current_step = steps[current_index + 1]
             db.update_step(conn, 
-            {"temperature": current_step["temperature"], "begin_date": current_step["begin_date"], "end_date": current_step["end_date"], "current": 1})
+            {"temperature": current_step["temperature"], "begin_date": current_step["begin_date"], "end_date": current_step["end_date"], "current": 1, "id": current_step["id"]})
     else:
-        to_end = current_step["end_date"] - time.time()
+        to_end = int(current_step["end_date"]) - int(time.time())
         print("%s minutes of this step remaining..." % math.ceil(((to_end / 1000) / 60)))
 
 
