@@ -77,7 +77,7 @@ def update_batch(conn, batch):
     if batch["current"] == 1:
         cur.execute("""UPDATE batches SET current = 0""")
 
-    cur.execute("""UPDATE batches SET name = ?, current = ? WHERE id = ?""", (batch["name"], batch["current"]))
+    cur.execute("""UPDATE batches SET name = ?, current = ? WHERE id = ?""", (batch["name"], batch["current"], batch["id"]))
     conn.commit()
     
     return cur.lastrowid

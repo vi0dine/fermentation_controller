@@ -40,6 +40,8 @@ def call():
             led_cycle(220, 0, 255, 0.05, 1)
             db.create_reading(conn, current_batch, current_step, temperature)
             time.sleep(30)
+        else:
+            print("Cant find current step")
 
 def check_temperature_settings(current):
     if abs(temperature - desired_temperature) > hysteresis:

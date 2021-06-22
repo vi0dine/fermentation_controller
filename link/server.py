@@ -21,7 +21,7 @@ def batches():
 def batch(id):
     data = request.get_json(force=True)
     conn = db.create_connection(r"./brew_valley_link.db")
-    batch = db.update_batch(conn, {"id": id, })
+    batch = db.update_batch(conn, {"id": id, "name": data["name"], "current": data["current"] })
     return render_json(batch)
 
 
