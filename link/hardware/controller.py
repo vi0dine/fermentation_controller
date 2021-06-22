@@ -59,17 +59,17 @@ def change_step():
 
 
 def toggle_heater(state):
-    if state == "ON" && GPIO.input(HEATER_PIN):
+    if state == "ON" and GPIO.input(HEATER_PIN):
         led_cycle(255, 0, 0)
         GPIO.output(HEATER_PIN, GPIO.LOW)
-    elif state == 'OFF' && !GPIO.input(HEATER_PIN):
+    elif state == 'OFF' and not GPIO.input(HEATER_PIN):
         GPIO.output(HEATER_PIN, GPIO.HIGH)
 
 def toggle_cooler(state):
-    if state == "ON" && GPIO.input(COOLER_PIN):
+    if state == "ON" and GPIO.input(COOLER_PIN):
         led_cycle(0, 0, 255)
         GPIO.output(COOLER_PIN, GPIO.LOW)
-    elif state == "OFF" && !GPIO.input(COOLER_PIN):
+    elif state == "OFF" and not GPIO.input(COOLER_PIN):
         GPIO.output(COOLER_PIN, GPIO.HIGH)
 
 
