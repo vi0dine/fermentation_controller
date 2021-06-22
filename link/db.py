@@ -35,6 +35,7 @@ def init_tables(conn):
                                 begin_date TIMESTAMP NOT NULL,
                                 end_date TIMESTAMP NOT NULL,
                                 batch_id integer NOT NULL,
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                 FOREIGN KEY (batch_id) REFERENCES batches (id)
                             );""")
         c.execute("""CREATE TABLE IF NOT EXISTS batch_temperature_readings (
