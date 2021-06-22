@@ -25,7 +25,7 @@ def batch(id):
     return render_json(batch)
 
 
-@app.route('/api/steps')
+@app.route('/api/steps', methods=['GET', 'POST'])
 def steps():
     if request.method == 'GET':
         conn = db.create_connection(r"./brew_valley_link.db")
