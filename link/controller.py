@@ -81,8 +81,9 @@ def change_step():
     if current_step["end_date"] <= time.time():
         print("Searching for the next step...")
         steps = db.get_steps(conn)
+        print(steps)
         current_index = steps.index(current_step)
-        if steps[current_index + 1]:
+        if len(steps) >= current_index + 1:
             print("Setting next step")
             led_cycle(120,120,0,0.02,1)
             current_step = steps[current_index + 1]
