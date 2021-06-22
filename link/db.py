@@ -134,9 +134,6 @@ def create_reading(conn, batch_id, step_id, reading):
     sql = ''' INSERT INTO batch_temperature_readings(temperature, fermentation_step_id, batch_id)
             VALUES(?,?,?) '''
     cur = conn.cursor()
-    print(reading)
-    print(step_id)
-    print(batch_id)
     cur.execute(sql, (reading, step_id, batch_id))
     conn.commit()
     return cur.lastrowid

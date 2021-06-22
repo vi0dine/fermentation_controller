@@ -74,7 +74,11 @@ def check_temperature_settings(current):
 
 def change_step():
     global current_step
-    if current_step["end_date"] >= time.time():
+
+    print(current_step["end_date"])
+    print(time.time())
+
+    if current_step["end_date"] <= time.time():
         print("Searching for the next step...")
         steps = db.get_steps(conn)
         current_index = steps.index(current_step)
