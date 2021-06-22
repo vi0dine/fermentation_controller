@@ -1,11 +1,6 @@
 from flask import Flask, request, Response
 import json
-import os, sys
-
-p = os.path.abspath('.')
-sys.path.insert(1, p)
-
-from database import db
+import db
 
 app = Flask(__name__)
 

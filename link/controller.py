@@ -4,12 +4,8 @@ import time
 import board
 import neopixel
 import time
-import os, sys
 
-p = os.path.abspath('.')
-sys.path.insert(1, p)
-
-from database import db
+import db
 
 GPIO.setmode(GPIO.BCM)
 
