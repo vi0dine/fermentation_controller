@@ -113,10 +113,12 @@ def update_step(conn, step):
         cur.execute("UPDATE fermentation_steps SET current = 0")
 
     cur.execute("""UPDATE fermentation_steps SET temperature = ?, 
-                                                 current = ? 
+                                                 current = ?,
                                                  begin_date = ?,
                                                  end_date = ? WHERE id = ?""", 
-                                                 (step["temperature"], step["current"], step["begin_date"], step["end_date"]))
+                                                 (step["temperature"], step["current"], step["begin_date"], step["end_date"], step["id"]))
+    conn.commit()
+    return cur.lastrowid
 
 def get_readings(conn):
     cur = conn.cursor()
@@ -132,6 +134,9 @@ def create_reading(conn, batch_id, step_id, reading):
     sql = ''' INSERT INTO batch_temperature_readings(temperature, fermentation_step_id, batch_id)
             VALUES(?,?,?) '''
     cur = conn.cursor()
+    print(reading)
+    print(step_id)
+    print(batch_id)
     cur.execute(sql, (reading, step_id, batch_id))
     conn.commit()
     return cur.lastrowid

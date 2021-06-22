@@ -29,24 +29,33 @@ desired_temperature = None
 hysteresis = 0.5
 
 def call():
+    global current_batch
+    global current_step
+    global desired_temperature
+
     current_batch = db.get_current_batch(conn)
     current_step = db.get_current_step(conn)
 
     while True:
-        if current_batch or current_step:
-            desired_temperature = current_step["temperature"]
+        if current_batch and current_step:
+            desired_temperature = float(current_step["temperature"])
             temperature = sensor.get_temperature()
+            print("Found current step with desired temp %s" % desired_temperature)
+            print("Current temp: %s" % temperature)
             check_temperature_settings(temperature)
             change_step()
             led_cycle(220, 0, 255, 0.05, 1)
-            db.create_reading(conn, current_batch, current_step, temperature)
+            db.create_reading(conn, current_batch["id"], current_step["id"], temperature)
             time.sleep(30)
         else:
             print("Cant find current step")
+            time.sleep(60)
             current_batch = db.get_current_batch(conn)
             current_step = db.get_current_step(conn)
 
 def check_temperature_settings(current):
+    global desired_temperature
+    global hysteresis
     if abs(current - desired_temperature) > hysteresis:
         if current > desired_temperature:
             toggle_heater("OFF")
@@ -58,10 +67,13 @@ def check_temperature_settings(current):
             toggle_heater("ON")
 
 def change_step():
+    global current_step
     if current_step["end_date"] >= time.time():
+        print("Searching for the next step...")
         steps = db.get_steps(conn)
         current_index = steps.index(current_step)
         if steps[current_index + 1]:
+            print("Setting next step")
             current_step = steps[current_index + 1]
 
 
@@ -88,3 +100,4 @@ def led_cycle(r,g,b, wait = 0.01, occurences = 3):
         for i in range(LEDS_COUNT):
             pixels[i] = (0, 0, 0)
             time.sleep(wait)
+call()
