@@ -4,8 +4,11 @@ import time
 import board
 import neopixel
 import time
-
+import os
 import db
+import math
+
+clear = lambda: os.system('clear')
 
 GPIO.setmode(GPIO.BCM)
 
@@ -38,10 +41,13 @@ def call():
 
     while True:
         if current_batch and current_step:
+            clear()
             desired_temperature = float(current_step["temperature"])
             temperature = sensor.get_temperature()
+            print("-------------------------------------")
             print("Found current step with desired temp %s" % desired_temperature)
             print("Current temp: %s" % temperature)
+            print("-------------------------------------")
             check_temperature_settings(temperature)
             change_step()
             led_cycle(220, 0, 255, 0.05, 1)
@@ -74,7 +80,13 @@ def change_step():
         current_index = steps.index(current_step)
         if steps[current_index + 1]:
             print("Setting next step")
+            led_cycle(120,120,0,0.02,1)
             current_step = steps[current_index + 1]
+            db.update_step(conn, 
+            {"temperature": current_step["temperature"], "begin_date": current_step["begin_date"], "end_date": current_step["end_date"], "current": 1})
+    else:
+        to_end = current_step["end_date"] - time.time()
+        print("%s minutes of this step remaining..." % math.ceil(((to_end / 1000) / 60)))
 
 
 def toggle_heater(state):
