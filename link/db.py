@@ -13,7 +13,6 @@ def create_connection(db_file):
         conn = sqlite3.connect(db_file)
         conn.row_factory = dict_factory
         init_tables(conn)
-        seed_test_data(conn)
     except Error as e:
         print(e)
     
@@ -68,7 +67,7 @@ def create_batch(conn, batch):
     sql = ''' INSERT INTO batches(name)
             VALUES(?) '''
     cur = conn.cursor()
-    cur.execute(sql, batch)
+    cur.execute(sql, (batch,))
     conn.commit()
     return cur.lastrowid
 
@@ -89,7 +88,7 @@ def get_steps(conn):
     current_batch = cur.fetchone()
 
     if current_batch:
-        cur.execute("SELECT * FROM fermentation_steps WHERE batch_id = ? ORDER BY start_date ASC", (current_batch["id"],))
+        cur.execute("SELECT * FROM fermentation_steps WHERE batch_id = ? ORDER BY begin_date ASC", (current_batch["id"],))
         rows = cur.fetchall()
         return rows
 
@@ -134,6 +133,6 @@ def create_reading(conn, batch_id, step_id, reading):
 def seed_test_data(conn):
     create_batch(conn, ("Test Batch 1"))
     create_batch(conn, ("Test Batch 2"))
-    create_step(conn, (17.0, 1624289246, 1624462046, 2))
-    create_step(conn, (21.0, 1624462046, 1624807646, 2))
-    create_step(conn, (24.0, 1624807646, 1624907646, 2))
+    create_step(conn, (17.0, 1624381558, 1624381858, 2))
+    create_step(conn, (21.0, 1624381858, 1624382158, 2))
+    create_step(conn, (24.0, 1624382158, 1624382458, 2))
