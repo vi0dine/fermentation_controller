@@ -26,7 +26,7 @@ def init_tables(conn):
                                 id integer PRIMARY KEY AUTOINCREMENT,
                                 name text NOT NULL,
                                 current integer DEFAULT 0,
-                                created_at integer DEFAULT datetime('now', 'unixepoch')
+                                created_at integer DEFAULT (strftime('%s','now'))
                             ); """)
         c.execute("""CREATE TABLE IF NOT EXISTS fermentation_steps (
                                 id integer PRIMARY KEY AUTOINCREMENT,
@@ -35,13 +35,13 @@ def init_tables(conn):
                                 begin_date integer NOT NULL,
                                 end_date integer NOT NULL,
                                 batch_id integer NOT NULL,
-                                created_at integer DEFAULT datetime('now', 'unixepoch'),
+                                created_at integer DEFAULT (strftime('%s','now')),
                                 FOREIGN KEY (batch_id) REFERENCES batches (id)
                             );""")
         c.execute("""CREATE TABLE IF NOT EXISTS batch_temperature_readings (
                                 id integer PRIMARY KEY AUTOINCREMENT,
                                 temperature real NOT NULL,
-                                time integer DEFAULT datetime('now', 'unixepoch'),
+                                time integer DEFAULT (strftime('%s','now')),
                                 batch_id integer NOT NULL,
                                 fermentation_step_id integer NOT NULL,
                                 FOREIGN KEY (fermentation_step_id) REFERENCES fermentation_steps (id),
