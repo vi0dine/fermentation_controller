@@ -130,7 +130,7 @@ def get_readings(conn):
                        FROM batch_temperature_readings AS r
                        LEFT JOIN fermentation_steps AS f
                        ON r.fermentation_step_is = f.id
-                       WHERE batch_id = ?
+                       WHERE r.batch_id = ?
                        ORDER BY time ASC""", (current_batch["id"],))
         rows = cur.fetchall()
         return rows
