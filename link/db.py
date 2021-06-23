@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 from sqlite3 import Error, Row
 
@@ -25,22 +26,22 @@ def init_tables(conn):
                                 id integer PRIMARY KEY AUTOINCREMENT,
                                 name text NOT NULL,
                                 current integer DEFAULT 0,
-                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                created_at integer DEFAULT CURRENT_TIMESTAMP
                             ); """)
         c.execute("""CREATE TABLE IF NOT EXISTS fermentation_steps (
                                 id integer PRIMARY KEY AUTOINCREMENT,
                                 current integer DEFAULT 0,
                                 temperature real NOT NULL,
-                                begin_date TIMESTAMP NOT NULL,
-                                end_date TIMESTAMP NOT NULL,
+                                begin_date integer NOT NULL,
+                                end_date integer NOT NULL,
                                 batch_id integer NOT NULL,
-                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                created_at integer DEFAULT CURRENT_TIMESTAMP,
                                 FOREIGN KEY (batch_id) REFERENCES batches (id)
                             );""")
         c.execute("""CREATE TABLE IF NOT EXISTS batch_temperature_readings (
                                 id integer PRIMARY KEY AUTOINCREMENT,
                                 temperature real NOT NULL,
-                                time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                time integer DEFAULT CURRENT_TIMESTAMP,
                                 batch_id integer NOT NULL,
                                 fermentation_step_id integer NOT NULL,
                                 FOREIGN KEY (fermentation_step_id) REFERENCES fermentation_steps (id),
@@ -132,7 +133,7 @@ def get_readings(conn, params):
                        ON r.fermentation_step_id = f.id
                        WHERE r.batch_id = ? AND r.time > ?
                        ORDER BY time ASC
-                       LIMIT 120""", (current_batch["id"], params["last_timestamp"]))
+                       LIMIT 120""", (current_batch["id"], params["last_timestamp"] or datetime.datetime.now().timestamp()))
         rows = cur.fetchall()
         return rows
 
