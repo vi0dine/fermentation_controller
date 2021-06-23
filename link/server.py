@@ -71,7 +71,7 @@ def step(id):
 @login_required
 def readings():
     conn = db.create_connection(r"./brew_valley_link.db")
-    readings = db.get_readings(conn)
+    readings = db.get_readings(conn, request.args)
     return render_json(readings)
 
 def render_json(response, status=200):
