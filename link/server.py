@@ -1,11 +1,31 @@
 from flask import Flask, request, Response
+from flask_cors import CORS
+from functools import wraps
 import json
 import db
 
 app = Flask(__name__)
+CORS(app)
+
+def login_required(f):
+    @wraps(f)
+    def wrapped_view(**kwargs):
+        auth = request.authorization
+        if not (auth and check_auth(auth.username, auth.password)):
+            return ('Unauthorized', 401, {
+                'WWW-Authenticate': 'Basic realm="Login Required"'
+            })
+
+        return f(**kwargs)
+
+    return wrapped_view
+
+def check_auth(username, password):
+    return username == 'test' and password == 'test'
 
 
 @app.route('/api/batches', methods=['GET', 'POST'])
+@login_required
 def batches():
     if request.method == 'GET':
         conn = db.create_connection(r"./brew_valley_link.db")
@@ -18,6 +38,7 @@ def batches():
         return render_json(batch, 201)
 
 @app.route('/api/batches/<id>', methods=['PUT'])
+@login_required
 def batch(id):
     data = request.get_json(force=True)
     conn = db.create_connection(r"./brew_valley_link.db")
@@ -26,6 +47,7 @@ def batch(id):
 
 
 @app.route('/api/steps', methods=['GET', 'POST'])
+@login_required
 def steps():
     if request.method == 'GET':
         conn = db.create_connection(r"./brew_valley_link.db")
@@ -38,6 +60,7 @@ def steps():
         return render_json(step, 201)
 
 @app.route('/api/steps/<id>', methods=['PUT'])
+@login_required
 def step(id):
     data = request.get_json(force=True)
     conn = db.create_connection(r"./brew_valley_link.db")
@@ -45,6 +68,7 @@ def step(id):
     return render_json(step)
 
 @app.route('/api/readings')
+@login_required
 def readings():
     conn = db.create_connection(r"./brew_valley_link.db")
     readings = db.get_readings(conn)

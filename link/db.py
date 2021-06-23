@@ -126,7 +126,12 @@ def get_readings(conn):
     current_batch = cur.fetchone()
 
     if current_batch:
-        cur.execute("SELECT * FROM batch_temperature_readings WHERE batch_id = ?", (current_batch["id"],))
+        cur.execute("""SELECT r.temperature, r.time, f.temperature AS desired
+                       FROM batch_temperature_readings AS r
+                       LEFT JOIN fermentation_steps AS f
+                       ON r.fermentation_step_is = f.id
+                       WHERE batch_id = ?
+                       ORDER BY time ASC""", (current_batch["id"],))
         rows = cur.fetchall()
         return rows
 
