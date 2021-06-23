@@ -120,7 +120,7 @@ def update_step(conn, step):
     conn.commit()
     return cur.lastrowid
 
-def get_readings(conn):
+def get_readings(conn, params):
     cur = conn.cursor()
     cur.execute("SELECT * FROM batches WHERE current = 1")
     current_batch = cur.fetchone()
@@ -130,8 +130,9 @@ def get_readings(conn):
                        FROM batch_temperature_readings AS r
                        LEFT JOIN fermentation_steps AS f
                        ON r.fermentation_step_id = f.id
-                       WHERE r.batch_id = ?
-                       ORDER BY time ASC""", (current_batch["id"],))
+                       WHERE r.batch_id = ? AND r.time > ?
+                       ORDER BY time ASC
+                       LIMIT 120""", (current_batch["id"], params["last_timestamp"]))
         rows = cur.fetchall()
         return rows
 
