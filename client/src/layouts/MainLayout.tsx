@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import {Link, useLocation} from 'react-router-dom'
+import * as _ from 'lodash'
 
 const navigation = ['Dashboard', 'Batches', 'Steps', 'Settings', 'Reports']
 
@@ -129,14 +130,16 @@ const MainLayout = ({children}: MainLayoutProps) => {
                 </Disclosure>
                 <header className="py-10">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+                        <h1 className="text-3xl font-bold text-white">
+                            {_.capitalize(location.pathname.split("/")[1])}
+                        </h1>
                     </div>
                 </header>
             </div>
 
             <main className="-mt-32">
                 <div className="max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
-                    <div className="bg-purple-100 rounded-lg shadow px-5 py-6 sm:px-6">
+                    <div className="bg-white rounded-lg shadow px-5 py-6 sm:px-6">
                         {children}
                     </div>
                 </div>

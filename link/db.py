@@ -133,7 +133,7 @@ def get_readings(conn, params):
                        ON r.fermentation_step_id = f.id
                        WHERE r.batch_id = ? AND r.time > ?
                        ORDER BY time ASC
-                       LIMIT 120""", (current_batch["id"], params["last_timestamp"] or datetime.datetime.now().timestamp()))
+                       LIMIT 120""", (current_batch["id"], params.get("last_timestamp") or 0))
         rows = cur.fetchall()
         return rows
 

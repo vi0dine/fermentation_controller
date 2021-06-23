@@ -7,7 +7,9 @@ import {
 } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import Batches from "./pages/Batches/Batches";
 import {setupAxios} from "./config/axios";
+import Steps from "./pages/Steps/Steps";
 
 function App() {
   setupAxios()
@@ -19,6 +21,16 @@ function App() {
               <Dashboard />
             </MainLayout>
           </Route>
+          <Route path={"/batches"}>
+            <MainLayout>
+                <Batches />
+            </MainLayout>
+          </Route>
+            <Route path={"/steps"}>
+                <MainLayout>
+                    <Steps />
+                </MainLayout>
+            </Route>
         </Switch>
       </Router>
   );
